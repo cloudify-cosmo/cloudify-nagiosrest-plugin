@@ -1,0 +1,10 @@
+sudo yum install -y net-snmp-utils net-snmp
+sudo systemctl stop snmpd
+echo "syslocation Unknown
+syscontact Root <root@localhost>
+dontLogTCPWrappersConnects yes
+view CloudifyMonitoringView included .1.3.6.1.4.1.2021
+rouser cloudify_monitoring priv -V CloudifyMonitoringView" | sudo tee /etc/snmp/snmpd.conf
+echo "createUser cloudify_monitoring SHA snmpnagiostestauth AES snmpnagiostestpriv" | sudo tee -a /var/lib/net-snmp/snmpd.conf
+sudo systemctl start snmpd
+sudo systemctl enable snmpd

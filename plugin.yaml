@@ -1,0 +1,173 @@
+plugins:
+    nagiosrest:
+        executor: central_deployment_agent
+        source: null
+        package_name: cloudify-nagiosrest-plugin
+        package_version: 0.6.1
+        install: true
+
+
+# These should be included under the nagiosrest_monitoring key on a monitored
+# node's properties. See example blueprints.
+data_types:
+    cloudify.datatypes.nagiosrest.ConnectionProperties:
+        properties: &connection_properties
+            address:
+                description: >
+                    The IP address or hostname of the nagiosrest server.
+                    This should be the server that the managed nagios plugin
+                    has configured.
+                default: { get_secret: nagiosrest_address }
+            certificate:
+                description: >
+                    The PEM encoded certificate for the nagiosrest server.
+                default: { get_secret: nagiosrest_certificate }
+            username:
+                description: >
+                    The username for nagiosrest.
+                default: { get_secret: nagiosrest_user }
+            password:
+                description: >
+                    The password for nagiosrest.
+                default: { get_secret: nagiosrest_pass }
+
+    cloudify.datatypes.nagiosrest.Properties:
+        properties:
+            <<: *connection_properties
+            target_type:
+                description: >
+                    The name of the target type, which must already exist on
+                    the managed nagios server.
+            instance_ip_property:
+                description: >
+                    The runtime property or node property (if runtime property
+                    is unavailable) that contains this node's IP address.
+                default: ip
+            deployment_override:
+                description: >
+                    Used to associate a node with a deployment it is not part of.
+                    This will cause it to be reported as if part of that deployment, and
+                    any reaction workflows for the node or its instances will be run
+                    against that deployment.
+                default: null
+            groups:
+                description: >
+                    What groups this node is a member of.
+                    This should be a list of [group_type, group_name] lists.
+                default: []
+    cloudify.nagiosrest.datatypes.workflow:
+        properties:
+            workflow_id:
+                description: >
+                    The ID of the workflow to call.
+                    If this is null then there will be no reaction.
+                default: null
+            parameters:
+                description: >
+                    A dictionary of parameters to pass to this workflow.
+                    The following substitutions will be performed:
+                    {{deployment}} - The deployment name associated with
+                                     the instance or node that this workflow
+                                     was triggered from.
+                    {{node}} - The node ID associated with the instance or
+                               node that this workflow was triggered from.
+                    {{instance}} - The instance ID of the instance that
+                                   this workflow was triggered from.
+                                   This is not applicable for checks across
+                                   all instances of a node.
+                default: {}
+            allow_custom_parameters:
+                description: >
+                    Whether to allow parameters that are not expected
+                    to be supplied to this workflow.
+                default: false
+            force:
+                description: >
+                    Whether to force this workflow to run if another
+                    workflow is running on the same deployment.
+                default: false
+
+node_types:
+    cloudify.nagiosrest.nodes.GroupInstance:
+        derived_from: cloudify.nodes.ApplicationModule
+        properties:
+            group_type:
+                description: >
+                    The type of group (declared in the nagios blueprint).
+            group_name:
+                description: >
+                    The name of this instance of this group type.
+            reaction_target:
+                description: >
+                    The deployment that reaction workflows for this group instance will run against.
+            nagiosrest_monitoring:
+                description: >
+                    Connection details for nagiosrest server.
+                type: cloudify.datatypes.nagiosrest.ConnectionProperties
+        interfaces:
+            cloudify.interfaces.lifecycle:
+                create:
+                    implementation: nagiosrest.nagiosrest_plugin.tasks.create_group
+                    inputs: {}
+
+    cloudify.nagiosrest.nodes.MetaGroup:
+        derived_from: cloudify.nodes.ApplicationModule
+        properties:
+            group_type:
+                description: >
+                    The type of group (declared in the nagios blueprint).
+            group_instance_prefix:
+                description: >
+                    The prefix of all checks of this type to include in this aggregate.
+            target:
+                description: >
+                    The deployment that reaction workflows for this group instance will run against.
+            approach:
+                description: >
+                    Which approach to use to calculate the aggregate.
+                    Valid options are: arithmetic_mean, sum
+            unknown:
+                description: >
+                    What to do if encountering unknown results on the aggregation check.
+                    'ignore' will ignore the check but process the average from the rest of the checks.
+                    'abort' will cause the aggregate check to enter an unknown status.
+                default: abort
+            interval:
+                description: >
+                    How often to run checks, in minutes.
+                default: 1
+            low_warning_threshold:
+                description: >
+                    Warning state when below this threshold.
+                    Warning states will not cause actions, they are for visual feedback.
+                default: ""
+            low_critical_threshold:
+                description: >
+                    Critical state when below this threshold.
+                default: ""
+            high_warning_threshold:
+                description: >
+                    Warning state when above this threshold.
+                    Warning states will not cause actions, they are for visual feedback.
+                default: ""
+            high_critical_threshold:
+                description: >
+                    Critical state when above this threshold.
+                default: ""
+            low_reaction:
+                description: >
+                    What action to take when the low critical threshold is breached.
+                type: cloudify.nagiosrest.datatypes.workflow
+            high_reaction:
+                description: >
+                    What action to take when the high critical threshold is breached.
+                type: cloudify.nagiosrest.datatypes.workflow
+            nagiosrest_monitoring:
+                description: >
+                    Connection details for nagiosrest server.
+                type: cloudify.datatypes.nagiosrest.ConnectionProperties
+        interfaces:
+            cloudify.interfaces.lifecycle:
+                create:
+                    implementation: nagiosrest.nagiosrest_plugin.tasks.create_meta_group
+                    inputs: {}
