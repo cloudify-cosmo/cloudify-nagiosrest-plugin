@@ -8,13 +8,15 @@ from cloudify import ctx as cloudify_ctx
 from cloudify.decorators import operation
 from cloudify.exceptions import RecoverableError, NonRecoverableError
 
+
 def _get_desired_value(key,
                        args,
                        instance_attr,
                        node_prop):
     return (args.get(key) or
-           instance_attr.get(key) or
-           node_prop.get(key))
+            instance_attr.get(key) or
+            node_prop.get(key))
+
 
 def _get_base_url(ctx, entity_type, address):
     return 'https://{address}/nagiosrest/{entity_type}s/{tenant}'.format(
@@ -26,11 +28,12 @@ def _get_base_url(ctx, entity_type, address):
 
 def _get_instance_id_url(ctx, operation_inputs):
     props = _get_desired_value('nagiosrest_monitoring',
-                                               operation_inputs,
-                                               ctx.instance.runtime_properties,
-                                               ctx.node.properties)
-    address=props.get('address',
-                      ctx.node.properties['nagiosrest_monitoring']['address'])
+                               operation_inputs,
+                               ctx.instance.runtime_properties,
+                               ctx.node.properties)
+    address = props.get('address',
+                        ctx.node.properties['nagiosrest_monitoring']
+                        ['address'])
     return (
         '{base_url}'
         '/{deployment}/{instance_id}'
@@ -43,32 +46,34 @@ def _get_instance_id_url(ctx, operation_inputs):
 
 def _get_group_url(ctx, operation_inputs):
     props = _get_desired_value('nagiosrest_monitoring',
-                                               operation_inputs,
-                                               ctx.instance.runtime_properties,
-                                               ctx.node.properties)
-    address=props.get('address',
-                      ctx.node.properties['nagiosrest_monitoring']['address'])
+                               operation_inputs,
+                               ctx.instance.runtime_properties,
+                               ctx.node.properties)
+    address = props.get('address',
+                        ctx.node.properties['nagiosrest_monitoring']
+                        ['address'])
     return (
         '{base_url}'
         '/{group_type}/{group_name}'
     ).format(
         base_url=_get_base_url(ctx, 'group', address),
-        group_type = _get_desired_value('group_type', operation_inputs,
-                                         ctx.instance.runtime_properties,
-                                         ctx.node.properties),
-        group_name = _get_desired_value('group_name', operation_inputs,
-                                         ctx.instance.runtime_properties,
-                                         ctx.node.properties)
+        group_type=_get_desired_value('group_type', operation_inputs,
+                                      ctx.instance.runtime_properties,
+                                      ctx.node.properties),
+        group_name=_get_desired_value('group_name', operation_inputs,
+                                      ctx.instance.runtime_properties,
+                                      ctx.node.properties)
     )
 
 
 def _get_metagroup_url(ctx, operation_inputs):
     props = _get_desired_value('nagiosrest_monitoring',
-                                               operation_inputs,
-                                               ctx.instance.runtime_properties,
-                                               ctx.node.properties)
-    address=props.get('address',
-                      ctx.node.properties['nagiosrest_monitoring']['address'])
+                               operation_inputs,
+                               ctx.instance.runtime_properties,
+                               ctx.node.properties)
+    address = props.get('address',
+                        ctx.node.properties['nagiosrest_monitoring']
+                        ['address'])
 
     return (
         '{base_url}'
@@ -82,11 +87,12 @@ def _get_metagroup_url(ctx, operation_inputs):
 
 def _get_instance_ip(ctx, operation_inputs):
     props = _get_desired_value('nagiosrest_monitoring',
-                                               operation_inputs,
-                                               ctx.instance.runtime_properties,
-                                               ctx.node.properties)
-    ip=props.get('instance_ip_property',
-                      ctx.node.properties['nagiosrest_monitoring']['instance_ip_property'])
+                               operation_inputs,
+                               ctx.instance.runtime_properties,
+                               ctx.node.properties)
+    ip = props.get('instance_ip_property',
+                   ctx.node.properties['nagiosrest_monitoring']
+                   ['instance_ip_property'])
 
     try:
         return ctx.instance.runtime_properties[ip]
@@ -214,8 +220,8 @@ def create_meta_group(ctx, **operation_inputs):
                                       ctx.instance.runtime_properties,
                                       ctx.node.properties),
         'target': _get_desired_value('target', operation_inputs,
-                                      ctx.instance.runtime_properties,
-                                      ctx.node.properties)
+                                     ctx.instance.runtime_properties,
+                                     ctx.node.properties)
     }
     for prop in (
         'interval',
