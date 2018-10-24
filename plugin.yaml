@@ -3,7 +3,7 @@ plugins:
         executor: central_deployment_agent
         source: null
         package_name: cloudify-nagiosrest-plugin
-        package_version: 1.0.0
+        package_version: 1.1.0
         install: true
 
 
@@ -105,6 +105,9 @@ node_types:
                 create:
                     implementation: nagiosrest.nagiosrest_plugin.tasks.create_group
                     inputs: {}
+                delete:
+                    implementation: nagiosrest.nagiosrest_plugin.tasks.delete_group
+                    inputs: {}
 
     cloudify.nagiosrest.nodes.MetaGroup:
         derived_from: cloudify.nodes.ApplicationModule
@@ -166,4 +169,7 @@ node_types:
             cloudify.interfaces.lifecycle:
                 create:
                     implementation: nagiosrest.nagiosrest_plugin.tasks.create_meta_group
+                    inputs: {}
+                delete:
+                    implementation: nagiosrest.nagiosrest_plugin.tasks.delete_meta_group
                     inputs: {}

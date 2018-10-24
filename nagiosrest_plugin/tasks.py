@@ -174,7 +174,7 @@ def add_monitoring(ctx, **operation_inputs):
             'target_type': props['target_type'],
             'groups': props['groups'],
         },
-        operation_inputs
+        operation_inputs,
     )
 
 
@@ -186,7 +186,7 @@ def remove_monitoring(ctx, **operation_inputs):
         requests.delete,
         url,
         None,
-        operation_inputs
+        operation_inputs,
     )
 
 
@@ -203,7 +203,19 @@ def create_group(ctx, **operation_inputs):
         {
             'reaction_target': reaction_target,
         },
-        operation_inputs
+        operation_inputs,
+    )
+
+
+@operation
+def delete_group(ctx, **operation_inputs):
+    url = _get_group_url(ctx, operation_inputs)
+    _make_call(
+        ctx,
+        requests.delete,
+        url,
+        None,
+        operation_inputs,
     )
 
 
@@ -243,5 +255,17 @@ def create_meta_group(ctx, **operation_inputs):
         requests.put,
         url,
         data,
-        operation_inputs
+        operation_inputs,
+    )
+
+
+@operation
+def delete_meta_group(ctx, **operation_inputs):
+    url = _get_metagroup_url(ctx, operation_inputs)
+    _make_call(
+        ctx,
+        requests.delete,
+        url,
+        None,
+        operation_inputs,
     )
