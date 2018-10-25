@@ -115,6 +115,12 @@ def _get_cert(ctx, operation_inputs):
                                ctx.instance.runtime_properties,
                                ctx.node.properties)
     cert = props['certificate']
+    if 'CERTIFICATE' not in cert:
+        raise NonRecoverableError(
+            'Expected PEM encoded certificate, but saw: {cert}'.format(
+                cert=cert,
+            )
+        )
     tmpdir = tempfile.mkdtemp(prefix='nagiosrestcert_')
     cert_path = os.path.join(tmpdir, 'cert')
     with open(cert_path, 'w') as cert_handle:
