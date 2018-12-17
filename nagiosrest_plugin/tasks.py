@@ -152,7 +152,8 @@ def _make_call(ctx, request_method, url, data, operation_inputs):
         )
     elif result.status_code >= 400:
         raise RecoverableError(
-            'Parameters passed to server were incorrect. '
+            'Parameters passed to server were incorrect,'
+            'or Nagios is still starting. '
             'Call was to {url}, and '
             'response was {code}: {details}'.format(
                 url=url,
