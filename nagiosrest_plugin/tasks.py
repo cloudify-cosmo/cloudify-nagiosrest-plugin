@@ -151,7 +151,7 @@ def _make_call(ctx, request_method, url, data, operation_inputs):
             )
         )
     elif result.status_code >= 400:
-        raise NonRecoverableError(
+        raise RecoverableError(
             'Parameters passed to server were incorrect. '
             'Call was to {url}, and '
             'response was {code}: {details}'.format(
