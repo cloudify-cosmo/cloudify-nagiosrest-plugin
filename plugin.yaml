@@ -3,7 +3,7 @@ plugins:
         executor: central_deployment_agent
         source: null
         package_name: cloudify-nagiosrest-plugin
-        package_version: 1.1.0
+        package_version: 1.1.1
         install: true
 
 
