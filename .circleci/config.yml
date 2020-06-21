@@ -45,16 +45,16 @@ commands:
               exit 1
             fi
 
-  generate_py27_wagon:
+  generate_py27py36_wagon:
     steps:
       - run:
           name: Create Workspace Build directory.
           command: mkdir -p workspace/build
       - run:
-          name: Build py27 Wagon
+          name: Build py27py36 Wagon
           command: |
               git clone https://github.com/cloudify-cosmo/cloudify-wagon-build-containers.git
-              docker build -t cloudify-centos-7-wagon-builder cloudify-wagon-build-containers/centos_7
+              docker build -t cloudify-centos-7-wagon-builder cloudify-wagon-build-containers/centos_7_py2py3
               docker run -v ~/project/:/packaging cloudify-centos-7-wagon-builder
       - run:
           name: copy wagon to workspace
@@ -64,16 +64,16 @@ commands:
           paths:
             - build/*
 
-  generate_rhel_py27_wagon:
+  generate_rhel_py27py36_wagon:
     steps:
       - run:
           name: Create Workspace Build directory.
           command: mkdir -p workspace/build
       - run:
-          name: Build RHEL 27 Wagon
+          name: Build RHEL py27py36 Wagon
           command: |
               git clone https://github.com/cloudify-cosmo/cloudify-wagon-build-containers.git
-              docker build -t cloudify-redhat-7-wagon-builder cloudify-wagon-build-containers/redhat_7 --build-arg USERNAME="$USERNAME" --build-arg PASSWORD="$PASSWORD"
+              docker build -t cloudify-redhat-7-wagon-builder cloudify-wagon-build-containers/redhat_7_py2py3 --build-arg USERNAME="$USERNAME" --build-arg PASSWORD="$PASSWORD"
               docker run -v ~/project/:/packaging cloudify-redhat-7-wagon-builder
       - run:
           name: copy wagon to workspace
@@ -122,13 +122,13 @@ jobs:
     executor: wagon_generator
     steps:
       - checkout
-      - generate_py27_wagon
+      - generate_py27py36_wagon
 
   rhel_wagon:
     executor: wagon_generator
     steps:
       - checkout
-      - generate_rhel_py27_wagon
+      - generate_rhel_py27py36_wagon
 
   release:
     executor: py27
