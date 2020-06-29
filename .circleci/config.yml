@@ -145,11 +145,11 @@ workflows:
       - wagon:
           filters:
             branches:
-              only: /([0-9\.]*\-build|master|dev)/
+              only: /([0-9\.]*\-build|master|dev|replace-wagon-builder-to-py2py3-builder)/
       - rhel_wagon:
           filters:
             branches:
-              only: /([0-9\.]*\-build|master|dev)/
+              only: /([0-9\.]*\-build|master|dev|replace-wagon-builder-to-py2py3-builder)/
       - release:
           filters:
             branches:
@@ -165,4 +165,13 @@ workflows:
           branches:
             only:
               - master
-    jobs: *all_jobs
+    jobs:
+      - py3_compat
+      - wagon:
+        filters:
+          branches:
+            only: /([0-9\.]*\-build|master|dev)/
+      - rhel_wagon:
+          filters:
+            branches:
+              only: /([0-9\.]*\-build|master|dev)/
