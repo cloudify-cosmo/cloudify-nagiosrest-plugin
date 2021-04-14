@@ -138,6 +138,7 @@ def _make_call(ctx, request_method, url, data, operation_inputs):
             auth=_get_credentials(ctx, operation_inputs),
             json=data,
             verify=cert,
+            timeout=300,
         )
 
     if result.status_code >= 500:

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='cloudify-nagiosrest-plugin',
-    version='1.1.2',
+    version='1.1.3',
     packages=[
         'nagiosrest_plugin',
     ],
