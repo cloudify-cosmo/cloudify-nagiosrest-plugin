@@ -108,6 +108,14 @@ def _get_credentials(ctx, operation_inputs):
     return props['username'], props['password']
 
 
+def _get_timeout(ctx, operation_inputs):
+    props = _get_desired_value('nagiosrest_monitoring',
+                               operation_inputs,
+                               ctx.instance.runtime_properties,
+                               ctx.node.properties)
+    return props['timeout']
+
+
 @contextmanager
 def _get_cert(ctx, operation_inputs):
     props = _get_desired_value('nagiosrest_monitoring',
@@ -138,7 +146,7 @@ def _make_call(ctx, request_method, url, data, operation_inputs):
             auth=_get_credentials(ctx, operation_inputs),
             json=data,
             verify=cert,
-            timeout=300,
+            timeout=_get_timeout(ctx, operation_inputs),
         )
 
     if result.status_code >= 500:

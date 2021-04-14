@@ -26,6 +26,10 @@ data_types:
             password:
                 description: >
                     The password for nagiosrest.
+            timeout:
+                description: >
+                    Timeout on requests call to nagiosrest.
+                default: 300
 
     cloudify.datatypes.nagiosrest.Properties:
         properties:
