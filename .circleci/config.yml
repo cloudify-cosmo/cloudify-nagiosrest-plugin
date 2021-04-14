@@ -15,6 +15,10 @@ executors:
     docker:
       - image: circleci/python:2.7
 
+  py36:
+    docker:
+      - image: circleci/python:3.6
+
   wagon_generator:
     machine:
       image: ubuntu-1604:201903-01
@@ -131,7 +135,7 @@ jobs:
       - generate_rhel_py27py36_wagon
 
   release:
-    executor: py27
+    executor: py36
     steps:
       - checkout
       - release_plugin
