@@ -141,6 +141,8 @@ def _get_cert(ctx, operation_inputs):
 
 def _make_call(ctx, request_method, url, data, operation_inputs):
     with _get_cert(ctx, operation_inputs) as cert:
+        ctx.logger.info("yaniv log")
+        ctx.logger.info("cert = {}".format(cert))
         result = request_method(
             url,
             auth=_get_credentials(ctx, operation_inputs),
