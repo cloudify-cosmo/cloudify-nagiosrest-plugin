@@ -42,7 +42,7 @@ data_types:
                 description: >
                     The runtime property or node property (if runtime property
                     is unavailable) that contains this node's IP address.
-                default: ip
+                default: private_ip_address
             deployment_override:
                 description: >
                     Used to associate a node with a deployment it is not part of.
